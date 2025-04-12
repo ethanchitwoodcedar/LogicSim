@@ -49,6 +49,7 @@ int main(int argc, char* argv[])
     map<int, Wire*> wires;
     vector<Gate*> gates;
     priority_queue<Event*> events;
+    bool endOfSimulation = true;
     int A;
     int B;
 
@@ -105,12 +106,19 @@ int main(int argc, char* argv[])
 
 
     while (!vectorIn.eof()) {
-        //TODO: parse vector file.
         vectorIn >> input;
         vectorIn >> input;
         vectorIn >> A;
         vectorIn >> B;
         events.push(new Event(input, A, B));
     }
+
+    while (!endOfSimulation) {
+         // TODO: empliment simulation.
+        endOfSimulation = false;
+    }
+
+    //TODO: empliment print.
+
     return 0;
 }

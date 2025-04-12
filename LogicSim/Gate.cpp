@@ -82,6 +82,17 @@ int Gate::XNOR() const
     return (in == 1) ? 0 : 1;
 }
 
+int Gate::NOT() const
+{
+    int a = input1->getValue();
+
+    if (a == -1) {
+        return -1;
+    }
+
+    return (a == 1) ? 0 : 1;
+}
+
 //Public members below.
 
 Gate::Gate(int newType, int newGateDelay, Wire* newInput1, Wire* newInput2, Wire* newOutput)
@@ -109,6 +120,8 @@ int Gate::evaluate() const
         return NOR();
     case 5:
         return XNOR();
+    case 6:
+        return NOT();
     default:
         return -99;
     }

@@ -23,6 +23,7 @@ private:
     int NAND() const;
     int NOR() const;
     int XNOR() const;
+    int NOT() const;
 public:
     Gate(int, int, Wire*, Wire*, Wire*);
     int getDelay() const { return gateDelay; }
