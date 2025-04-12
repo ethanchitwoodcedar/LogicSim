@@ -1,0 +1,116 @@
+#include "Gate.h"
+#include "Wire.h"
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <string>
+#include <queue>
+#include <vector>
+#include "Event.h"
+
+using namespace std;
+
+/* LoadGate creates a new gate from a definition in cricuitIn.
+   Additionaly if a wire in that definition does not exist the function will
+   create a new wire and add it to the wires map.*/
+Gate* loadGate(ifstream& circuitIn, map<int, Wire*>& wires, int type) {
+    string dump;
+    int delay;
+    int input1;
+    int input2;
+    int output;
+    Gate* newGate;
+
+    circuitIn >> delay >> dump >> input1 >> input2 >> output;
+
+    if (wires.find(input1) == wires.end()) {
+        wires.emplace(input1, new Wire(-1, "internalWire", input1));
+    }
+    if (wires.find(input2) == wires.end()) {
+        wires.emplace(input2, new Wire(-1, "internalWire", input2));
+    }
+    if (wires.find(output) == wires.end()) {
+        wires.emplace(output, new Wire(-1, "internalWire", output));
+    }
+
+    newGate = new Gate(type, delay, wires.at(input1), wires.at(input2), wires.at(output));
+    wires.at(input1)->addDrive(newGate);
+    wires.at(input2)->addDrive(newGate);
+    return newGate;
+}
+
+int main(int argc, char* argv[])
+{
+    ifstream circuitIn;
+    ifstream vectorIn;
+    string filename;
+    string input;
+    string circuitName;
+    map<int, Wire*> wires;
+    vector<Gate*> gates;
+    priority_queue<Event*> events;
+    int A;
+    int B;
+
+    do {
+        cout << "Please enter the name of the file (base name only) : ";
+        cin >> filename;
+        circuitIn.open((filename + ".txt").c_str());
+        vectorIn.open((filename + "_v.txt").c_str());
+        if (!(circuitIn && vectorIn)) {
+            cout << "Error: could not open file\n";
+        }
+    } while (!(circuitIn && vectorIn));
+
+    circuitIn >> input >> circuitName;
+
+    while (!circuitIn.eof()) {
+        //TODO: parse cricuit file.
+        circuitIn >> input;
+        if ("INPUT" == input) {
+            circuitIn >> input;
+            circuitIn >> A;
+            wires.emplace(A, new Wire(-1, input, A));
+        }
+        else if ("OUTPUT" == input) {
+            circuitIn >> input;
+            circuitIn >> A;
+            wires.emplace(A, new Wire(-1, input, A));
+        }
+        else if ("AND" == input) {
+            gates.push_back(loadGate(circuitIn, wires, 0));
+        }
+        else if ("OR" == input) {
+            gates.push_back(loadGate(circuitIn, wires, 1));
+        }
+        else if ("XOR" == input) {
+            gates.push_back(loadGate(circuitIn, wires, 2));
+        }
+        else if ("NAND" == input) {
+            gates.push_back(loadGate(circuitIn, wires, 3));
+        }
+        else if ("NOR" == input) {
+            gates.push_back(loadGate(circuitIn, wires, 4));
+        }
+        else if ("XNOR" == input) {
+            gates.push_back(loadGate(circuitIn, wires, 5));
+        }
+        else if ("NOT" == input) {
+            gates.push_back(loadGate(circuitIn, wires, 6));
+        }
+    }
+
+    vectorIn >> input;
+    vectorIn >> input;
+
+
+    while (!vectorIn.eof()) {
+        //TODO: parse vector file.
+        vectorIn >> input;
+        vectorIn >> input;
+        vectorIn >> A;
+        vectorIn >> B;
+        events.push(new Event(input, A, B));
+    }
+    return 0;
+}
