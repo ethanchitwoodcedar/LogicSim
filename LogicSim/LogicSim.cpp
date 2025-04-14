@@ -39,17 +39,11 @@ Gate* loadGate(ifstream& circuitIn, map<int, Wire*>& wires, int type) {
     return newGate;
 }
 
-int main(int argc, char* argv[])
-{
+void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Event*>& events, string& circuitName ) {
     ifstream circuitIn;
     ifstream vectorIn;
     string filename;
     string input;
-    string circuitName;
-    map<int, Wire*> wires;
-    vector<Gate*> gates;
-    priority_queue<Event*> events;
-    bool endOfSimulation = true;
     int A;
     int B;
 
@@ -113,12 +107,44 @@ int main(int argc, char* argv[])
         events.push(new Event(input, A, B));
     }
 
+    circuitIn.close();
+    vectorIn.close();
+}
+
+void simulate(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Event*>& events) {
+    bool endOfSimulation = true;
+    
     while (!endOfSimulation) {
-         // TODO: empliment simulation.
+        // TODO: empliment simulation.
         endOfSimulation = false;
     }
+}
 
-    //TODO: empliment print.
+void print(map<int, Wire*>& wires, string circuitName) {
+    cout << endl << circuitName << endl << endl;
+    cout << "------------------------------";
+    cout << "------------------------------\n";
+    for (auto itr : wires) {
+        cout << itr.second->getName() << " ";
+        itr.second->printHistory();
+        cout << endl;
+    }
+    cout << "------------------------------";
+    cout << "------------------------------\n";
+}
+
+int main(int argc, char* argv[])
+{
+    string circuitName;
+    map<int, Wire*> wires;
+    vector<Gate*> gates;
+    priority_queue<Event*> events;
+   
+    parseFiles(gates, wires, events, circuitName);
+
+    simulate(gates, wires, events);
+
+    print(wires, circuitName);
 
     return 0;
 }
