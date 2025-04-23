@@ -112,11 +112,10 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Eve
 }
 
 void simulate(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Event*>& events) {
-    bool endOfSimulation = true;
     
-    while (!endOfSimulation) {
+    for (int time = 0; time < 60; time++) {
         // TODO: empliment simulation.
-        endOfSimulation = false;
+        
     }
 }
 
@@ -133,7 +132,7 @@ void print(map<int, Wire*>& wires, string circuitName) {
     cout << "------------------------------\n";
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char* argv[]) 
 {
     string circuitName;
     map<int, Wire*> wires;
