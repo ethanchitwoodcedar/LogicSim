@@ -4,16 +4,16 @@ using namespace std;
 
 class Event {
 public:
-	Event(string wireName, int time, int value) {
+	Event(int key, int time, int value) {
 		this->value = value;
 		this->time = time;
-		this->wireName = wireName;
+		this->key = key;
 	}
-	string getName() const { return wireName; }
+	int getKey() const { return key; }
 	int getValue() const { return value; }
 	int getTime() const { return time; }
 private:
-	string wireName;
+	int key;
 	int time;
 	int value;
 };

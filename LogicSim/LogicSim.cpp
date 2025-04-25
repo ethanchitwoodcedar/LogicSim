@@ -39,11 +39,12 @@ Gate* loadGate(ifstream& circuitIn, map<int, Wire*>& wires, int type) {
     return newGate;
 }
 
-void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Event*>& events, string& circuitName ) {
+void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& events, string& circuitName, vector<Wire*>& outputs) {
     ifstream circuitIn;
     ifstream vectorIn;
     string filename;
     string input;
+    int key;
     int A;
     int B;
 
@@ -71,6 +72,7 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Eve
             circuitIn >> input;
             circuitIn >> A;
             wires.emplace(A, new Wire(-1, input, A));
+            outputs.push_back(new Wire(-1, input, A));
         }
         else if ("AND" == input) {
             gates.push_back(loadGate(circuitIn, wires, 0));
@@ -104,18 +106,43 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Eve
         vectorIn >> input;
         vectorIn >> A;
         vectorIn >> B;
-        events.push(new Event(input, A, B));
+        // Find key corrisponding to wire name
+        for (map<int, Wire*>::iterator itr = wires.begin(); itr != wires.end(); itr++) {
+            if (itr->second->getName() == input) {
+                key = itr->first;
+            }
+        }
+        events.push(new Event(key, A, B));
     }
 
     circuitIn.close();
     vectorIn.close();
 }
 
-void simulate(vector<Gate*>& gates, map<int, Wire*>& wires, priority_queue<Event*>& events) {
+Gate* getGate(Wire* wire, vector<Gate*> list) {
+    for (int i = 0; i < list.size(); i++) {
+        if (list.at(i)->getOutput() == wire) {
+            return list.at(i);
+        }
+    }
+    return nullptr;
+}
+
+void evaluteAll(Wire* wire, queue<Event*> events, map<int, Wire*> wires) {
+    for (int t = 0; t < 60; t++) {
+        while (events.front()->getTime() == t) {
+            wires.at(events.front()->getKey())->setValue(events.front()->getValue());
+            events.pop();
+        }
+    }
+}
+
+void simulate(Wire* wire, vector<Gate*> list, queue<Event*> events) {
     
     for (int time = 0; time < 60; time++) {
         // TODO: empliment simulation.
-        
+        // Update input wires
+         
     }
 }
 
@@ -137,9 +164,10 @@ int main(int argc, char* argv[])
     string circuitName;
     map<int, Wire*> wires;
     vector<Gate*> gates;
-    priority_queue<Event*> events;
+    vector<Wire*> outputs;
+    queue<Event*> events;
    
-    parseFiles(gates, wires, events, circuitName);
+    parseFiles(gates, wires, events, circuitName, outputs);
 
     simulate(gates, wires, events);
 
