@@ -128,7 +128,7 @@ Gate* getGate(Wire* wire, vector<Gate*> list) {
     return nullptr;
 }
 
-void evaluteAll(Wire* wire, queue<Event*> events, map<int, Wire*> wires) {
+void evaluateAll(queue<Event*> events, map<int, Wire*> wires) {
     for (int t = 0; t < 60; t++) {
         while (events.front()->getTime() == t) {
             wires.at(events.front()->getKey())->setValue(events.front()->getValue());
@@ -137,11 +137,12 @@ void evaluteAll(Wire* wire, queue<Event*> events, map<int, Wire*> wires) {
     }
 }
 
-void simulate(Wire* wire, vector<Gate*> list, queue<Event*> events) {
+void simulate(Wire* wire, vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events) {
     
     for (int time = 0; time < 60; time++) {
         // TODO: empliment simulation.
         // Update input wires
+        evaluateAll(events, wires);
          
     }
 }
