@@ -240,12 +240,16 @@ int main(int argc, char* argv[])
     vector<Gate*> gates;
     vector<Wire*> inputs, outputs;
     queue<Event*> events;
+    string wait;
    
     parseFiles(gates, wires, events, circuitName, inputs, outputs);
 
     simulate(gates, wires, events, inputs, outputs);
 
     print(inputs,outputs, circuitName);
+
+    cout << "\n\n Press any key to quit";
+    cin >> wait;
 
     return 0;
 }
