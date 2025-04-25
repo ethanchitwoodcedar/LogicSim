@@ -103,7 +103,7 @@ Gate::Gate(int newType, int newGateDelay, Wire* newInput1, Wire* newInput2, Wire
     type = newType;
     gateDelay = newGateDelay;
     input1 = newInput1;
-    if (type = 6) {
+    if (type == 6) {
         input2 = newInput1;
     }
     else {

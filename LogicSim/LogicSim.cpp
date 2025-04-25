@@ -20,17 +20,22 @@ Gate* loadGate(ifstream& circuitIn, map<int, Wire*>& wires, int type) {
     int input2;
     int output;
     Gate* newGate;
-
-    circuitIn >> delay >> dump >> input1 >> input2 >> output;
+    if (type == 6) {
+        circuitIn >> delay >> dump >> input1 >> output;
+        input2 = input1;
+    }
+    else{
+        circuitIn >> delay >> dump >> input1 >> input2 >> output;
+    }
 
     if (wires.find(input1) == wires.end()) {
-        wires.emplace(input1, new Wire(-1, "internalWire", input1));
+        wires.emplace(input1, new Wire(-1, "i", input1));
     }
     if (wires.find(input2) == wires.end()) {
-        wires.emplace(input2, new Wire(-1, "internalWire", input2));
+        wires.emplace(input2, new Wire(-1, "i", input2));
     }
     if (wires.find(output) == wires.end()) {
-        wires.emplace(output, new Wire(-1, "internalWire", output));
+        wires.emplace(output, new Wire(-1, "i", output));
     }
 
     newGate = new Gate(type, delay, wires.at(input1), wires.at(input2), wires.at(output));
@@ -152,6 +157,12 @@ void evaluateLetters(queue<Event*> events, map<int, Wire*> wires) {
 void evaluateInternals(Wire* output, vector<Gate*> list) {
     Gate* currentGate = getGate(output, list);
     int delay = currentGate->getDelay();
+    if (currentGate->getInput(0)->getHistory().size() < 60) {
+        evaluateInternals(currentGate->getInput(0), list);
+    }
+    if (currentGate->getInput(1)->getHistory().size() < 60) {
+        evaluateInternals(currentGate->getInput(1), list);
+    }
     if ((currentGate->getInput(0)->getHistory().size() == 60) && (currentGate->getInput(1)->getHistory().size() == 60)) {
         // Both inputs are complete
         for (int t = 0; t < 60; t++) {
@@ -163,12 +174,7 @@ void evaluateInternals(Wire* output, vector<Gate*> list) {
             }
         }
     }
-    if (currentGate->getInput(0)->getHistory().size() < 60) {
-        evaluateInternals(currentGate->getInput(0), list);
-    }
-    if (currentGate->getInput(1)->getHistory().size() < 60) {
-        evaluateInternals(currentGate->getInput(1), list);
-    }
+    
 }
 
 void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, vector<Wire*> inputs, vector<Wire*> outputs) {
@@ -194,13 +200,18 @@ void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, v
 
 }
 
-void print(map<int, Wire*>& wires, string circuitName) {
+void print(vector<Wire*>& inputs, vector<Wire*>& outputs, string circuitName) {
     cout << endl << circuitName << endl << endl;
     cout << "------------------------------";
     cout << "--------------------------------\n";
-    for (auto itr : wires) {
-        cout << itr.second->getName() << " ";
-        itr.second->printHistory();
+    for (int i = 0; i < inputs.size(); i++) {
+        cout << inputs.at(i)->getName() << " ";
+        inputs.at(i)->printHistory();
+        cout << endl;
+    }
+    for (int i = 0; i < outputs.size(); i++) {
+        cout << outputs.at(i)->getName() << " ";
+        outputs.at(i)->printHistory();
         cout << endl;
     }
     cout << "------------------------------";
@@ -219,7 +230,7 @@ int main(int argc, char* argv[])
 
     simulate(gates, wires, events, inputs, outputs);
 
-    print(wires, circuitName);
+    print(inputs,outputs, circuitName);
 
     return 0;
 }
