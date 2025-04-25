@@ -66,14 +66,16 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& eve
         if ("INPUT" == input) {
             circuitIn >> input;
             circuitIn >> A;
-            wires.emplace(A, new Wire(-1, input, A));
-            inputs.push_back(new Wire(-1, input, A));
+            Wire* newWire = new Wire(-1, input, A);
+            wires.emplace(A, newWire);
+            inputs.push_back(newWire);
         }
         else if ("OUTPUT" == input) {
             circuitIn >> input;
             circuitIn >> A;
-            wires.emplace(A, new Wire(-1, input, A));
-            outputs.push_back(new Wire(-1, input, A));
+            Wire* newWire = new Wire(-1, input, A);
+            wires.emplace(A, newWire);
+            outputs.push_back(newWire);
         }
         else if ("AND" == input) {
             gates.push_back(loadGate(circuitIn, wires, 0));
@@ -122,7 +124,7 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& eve
 
 Gate* getGate(Wire* wire, vector<Gate*> list) {
     for (int i = 0; i < list.size(); i++) {
-        if (list.at(i)->getOutput()->getIndex() == wire->getIndex()) {
+        if (list.at(i)->getOutput() == wire) {
             return list.at(i);
         }
     }
