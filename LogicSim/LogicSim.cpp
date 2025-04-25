@@ -137,7 +137,7 @@ void evaluateLetters(queue<Event*> events, map<int, Wire*> wires) {
         }
 
         // Correct if there are Events
-        while (events.front()->getTime() == t) {
+        while ((events.size() > 0) && (events.front()->getTime() == t)) {
             if (events.front()->getTime() == t) {
                 wires.at(events.front()->getKey())->removeHistory();
                 wires.at(events.front()->getKey())->setValue(events.front()->getValue());
