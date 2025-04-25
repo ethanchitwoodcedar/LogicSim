@@ -176,6 +176,16 @@ void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, v
     // Update input wires
     evaluateLetters(events, wires);
 
+    for (map<int, Wire*>::iterator itr = wires.begin(); itr != wires.end(); itr++) {
+        for (int i = 0; i < inputs.size(); i++) {
+            if (itr->second == inputs.at(i)) {
+                goto skipdelete;
+            }
+        }
+        itr->second->destroyHistory();
+        skipdelete:;
+    }
+
     for (int i = 0; i < outputs.size(); i++) {
         evaluateInternals(outputs.at(i), list);
     }

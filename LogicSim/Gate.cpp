@@ -6,8 +6,11 @@ int Gate::AND(int time) const
     int a = input1->getHistory().at(time);
     int b = input2->getHistory().at(time);
     int out;
-    if (a != -1 && b != -1) {
-        out = a * b;
+    if (a == 1 && b == 1) {
+        out = 1;
+    }
+    else if (a == 0 || b == 0) {
+        out = 0;
     }
     else {
         out = -1;
@@ -100,7 +103,12 @@ Gate::Gate(int newType, int newGateDelay, Wire* newInput1, Wire* newInput2, Wire
     type = newType;
     gateDelay = newGateDelay;
     input1 = newInput1;
-    input2 = newInput2;
+    if (type = 6) {
+        input2 = newInput1;
+    }
+    else {
+        input2 = newInput2;
+    }
     output = newOutput;
 }
 

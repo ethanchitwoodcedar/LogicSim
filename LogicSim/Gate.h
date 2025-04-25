@@ -12,7 +12,8 @@ private:
         XOR 2
         NAND 3
         NOR 4
-        XNOR 5  */
+        XNOR 5  
+        NOT 6*/
     int gateDelay;
     Wire* input1;
     Wire* input2;
