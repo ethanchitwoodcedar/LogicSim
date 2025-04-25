@@ -159,14 +159,17 @@ void evaluateInternals(Wire* output, vector<Gate*> list) {
     }
 }
 
-void simulate(Wire* wire, vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events) {
+void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, vector<Wire*> outputs) {
     
     // Update input wires
     evaluateLetters(events, wires);
 
-    for (int time = 0; time < 60; time++) {
-        
+    for (int i = 0; i < outputs.size(); i++) {
+        evaluateInternals(outputs.at(i), list);
     }
+
+
+
 }
 
 void print(map<int, Wire*>& wires, string circuitName) {
@@ -192,7 +195,7 @@ int main(int argc, char* argv[])
    
     parseFiles(gates, wires, events, circuitName, outputs);
 
-    simulate(gates, wires, events);
+    simulate(gates, wires, events, outputs);
 
     print(wires, circuitName);
 
