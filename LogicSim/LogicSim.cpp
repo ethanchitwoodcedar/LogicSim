@@ -144,7 +144,9 @@ void evaluateInternals(Wire* output, vector<Gate*> list) {
         // Both inputs are complete
         for (int t = 0; t < 60; t++) {
             if (t < delay) {
-                output->setValue
+                output->setValue(-1);
+            }
+            else {
             }
         }
 
