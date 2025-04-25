@@ -1,10 +1,10 @@
 #include "Gate.h"
 #include "Wire.h"
 
-int Gate::AND() const
+int Gate::AND(int time) const
 {
-    int a = input1->getValue();
-    int b = input2->getValue();
+    int a = input1->getHistory().at(time);
+    int b = input2->getHistory().at(time);
     int out;
     if (a != -1 && b != -1) {
         out = a * b;
@@ -15,10 +15,10 @@ int Gate::AND() const
     return out;
 }
 
-int Gate::OR() const
+int Gate::OR(int time) const
 {
-    int a = input1->getValue();
-    int b = input2->getValue();
+    int a = input1->getHistory().at(time);
+    int b = input2->getHistory().at(time);
     int out;
     if (a == -1 && b == -1) {
         out = -1;
@@ -35,10 +35,10 @@ int Gate::OR() const
     return out;
 }
 
-int Gate::XOR() const
+int Gate::XOR(int time) const
 {
-    int a = input1->getValue();
-    int b = input2->getValue();
+    int a = input1->getHistory().at(time);
+    int b = input2->getHistory().at(time);
     int out;
     if (a == -1 || b == -1) {
         out = -1;
@@ -55,36 +55,36 @@ int Gate::XOR() const
     return out;
 }
 
-int Gate::NAND() const
+int Gate::NAND(int time) const
 {
-    int in = AND();
+    int in = AND(time);
     if (in == -1) {
         return -1;
     }
     return (in == 1) ? 0 : 1;
 }
 
-int Gate::NOR() const
+int Gate::NOR(int time) const
 {
-    int in = OR();
+    int in = OR(time);
     if (in == -1) {
         return -1;
     }
     return (in == 1) ? 0 : 1;
 }
 
-int Gate::XNOR() const
+int Gate::XNOR(int time) const
 {
-    int in = XOR();
+    int in = XOR(time);
     if (in == -1) {
         return -1;
     }
     return (in == 1) ? 0 : 1;
 }
 
-int Gate::NOT() const
+int Gate::NOT(int time) const
 {
-    int a = input1->getValue();
+    int a = input1->getHistory().at(time);
 
     if (a == -1) {
         return -1;
@@ -104,24 +104,24 @@ Gate::Gate(int newType, int newGateDelay, Wire* newInput1, Wire* newInput2, Wire
     output = newOutput;
 }
 
-int Gate::evaluate() const
+int Gate::evaluate(int time) const
 {
     switch (type)
     {
     case 0:
-        return AND();
+        return AND(time);
     case 1:
-        return OR();
+        return OR(time);
     case 2:
-        return XOR();
+        return XOR(time);
     case 3:
-        return NAND();
+        return NAND(time);
     case 4:
-        return NOR();
+        return NOR(time);
     case 5:
-        return XNOR();
+        return XNOR(time);
     case 6:
-        return NOT();
+        return NOT(time);
     default:
         return -99;
     }
