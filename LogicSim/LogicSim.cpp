@@ -13,6 +13,7 @@ using namespace std;
 /* LoadGate creates a new gate from a definition in cricuitIn.
    Additionaly if a wire in that definition does not exist the function will
    create a new wire and add it to the wires map.*/
+
 Gate* loadGate(ifstream& circuitIn, map<int, Wire*>& wires, int type) {
     string dump;
     int delay;
@@ -44,6 +45,8 @@ Gate* loadGate(ifstream& circuitIn, map<int, Wire*>& wires, int type) {
     return newGate;
 }
 
+// ParseFiles reads the circuit and circuit_v files
+
 void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& events, string& circuitName, vector<Wire*>& inputs, vector<Wire*>& outputs) {
     ifstream circuitIn;
     ifstream vectorIn;
@@ -66,7 +69,6 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& eve
     circuitIn >> input >> circuitName;
 
     while (!circuitIn.eof()) {
-        //TODO: parse cricuit file.
         circuitIn >> input;
         if ("INPUT" == input) {
             circuitIn >> input;
@@ -127,17 +129,21 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& eve
     vectorIn.close();
 }
 
+// getGate is a function that searches the vector of gate pointers and finds the gate that is driving a specified wire.
+
 Gate* getGate(Wire* wire, vector<Gate*> list) {
     for (int i = 0; i < list.size(); i++) {
         if (list.at(i)->getOutput() == wire) {
             return list.at(i);
         }
     }
+    // If a gate is not found, a nullptr is returned instead.
     return nullptr;
 }
 
 void evaluateLetters(queue<Event*> events, map<int, Wire*> wires) {
     for (int t = 0; t < 60; t++) {
+
         // Update all to previous value
         for (map<int, Wire*>::iterator itr = wires.begin(); itr != wires.end(); itr++) {
             itr->second->setValue(itr->second->getValue());
@@ -155,14 +161,21 @@ void evaluateLetters(queue<Event*> events, map<int, Wire*> wires) {
 }
 
 void evaluateInternals(Wire* output, vector<Gate*> list) {
+    //Finds the gate driving the output wire.
     Gate* currentGate = getGate(output, list);
+
+    //Gets the delay of the gate.
     int delay = currentGate->getDelay();
+
+    //If the inputs of the gate have not been evaluated yet, run this function on them instead.
     if (currentGate->getInput(0)->getHistory().size() < 60) {
         evaluateInternals(currentGate->getInput(0), list);
     }
     if (currentGate->getInput(1)->getHistory().size() < 60) {
         evaluateInternals(currentGate->getInput(1), list);
     }
+
+    //If both inputs have been evaluated, the base case of this recursive function is executed.
     if ((currentGate->getInput(0)->getHistory().size() == 60) && (currentGate->getInput(1)->getHistory().size() == 60)) {
         // Both inputs are complete
         for (int t = 0; t < 60; t++) {
@@ -182,6 +195,7 @@ void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, v
     // Update input wires
     evaluateLetters(events, wires);
 
+    // Make sure that only the inputs are evaluated.
     for (map<int, Wire*>::iterator itr = wires.begin(); itr != wires.end(); itr++) {
         for (int i = 0; i < inputs.size(); i++) {
             if (itr->second == inputs.at(i)) {
@@ -192,14 +206,14 @@ void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, v
         skipdelete:;
     }
 
+    // Run the evaluateInternals function for every wire classified as an output. 
     for (int i = 0; i < outputs.size(); i++) {
         evaluateInternals(outputs.at(i), list);
     }
-
-
-
 }
 
+
+// Our print function. Prints only input and output wires, and has some border lines above and below.
 void print(vector<Wire*>& inputs, vector<Wire*>& outputs, string circuitName) {
     cout << endl << circuitName << endl << endl;
     cout << "------------------------------";
@@ -218,6 +232,7 @@ void print(vector<Wire*>& inputs, vector<Wire*>& outputs, string circuitName) {
     cout << "--------------------------------\n";
 }
 
+// Our main function. Runs the files parse function, simulates, and then prints the results.
 int main(int argc, char* argv[]) 
 {
     string circuitName;
