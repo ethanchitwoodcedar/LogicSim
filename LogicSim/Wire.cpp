@@ -6,6 +6,7 @@ Wire::Wire(int v = -1, std::string n = "new", int i = 0) {
     name = n;
     index = i;
     value = v;
+    history.push_back(-1);
 }
 
 int Wire::getValue() const {
@@ -31,7 +32,15 @@ std::vector<Gate*> Wire::getDrives() const {
 void Wire::printHistory() const {
     /* Currently implemented for a console application. */
     for (int i = 0; i < history.size(); i++) {
-        std::cout << history.at(i);
+        if (history.at(i) == 1) {
+            std::cout << "-";
+        }
+        else if (history.at(i) == 0) {
+            std::cout << "_";
+        }
+        else if (history.at(i) == -1) {
+            std::cout << "X";
+        }
     }
 }
 
