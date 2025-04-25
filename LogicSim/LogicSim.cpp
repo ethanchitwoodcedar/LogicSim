@@ -122,7 +122,7 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& eve
 
 Gate* getGate(Wire* wire, vector<Gate*> list) {
     for (int i = 0; i < list.size(); i++) {
-        if (list.at(i)->getOutput() == wire) {
+        if (list.at(i)->getOutput()->getIndex() == wire->getIndex()) {
             return list.at(i);
         }
     }
@@ -185,14 +185,14 @@ void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, v
 void print(map<int, Wire*>& wires, string circuitName) {
     cout << endl << circuitName << endl << endl;
     cout << "------------------------------";
-    cout << "------------------------------\n";
+    cout << "--------------------------------\n";
     for (auto itr : wires) {
         cout << itr.second->getName() << " ";
         itr.second->printHistory();
         cout << endl;
     }
     cout << "------------------------------";
-    cout << "------------------------------\n";
+    cout << "--------------------------------\n";
 }
 
 int main(int argc, char* argv[]) 
