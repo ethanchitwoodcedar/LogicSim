@@ -144,12 +144,11 @@ void evaluateInternals(Wire* output, vector<Gate*> list) {
         // Both inputs are complete
         for (int t = 0; t < 60; t++) {
             if (t < delay) {
-                output->setValue(-1);
+                output->setValue(currentGate->evaluate(t-delay));
             }
             else {
             }
         }
-
     }
     if (currentGate->getInput(0)->getHistory().size() < 60) {
         evaluateInternals(currentGate->getInput(0), list);
