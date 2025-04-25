@@ -46,8 +46,9 @@ void Wire::printHistory() const {
 
 void Wire::setValue(int v) {
     /* Automatically enters value in the history vector. */
-    history.push_back(value);
     value = v;
+    history.push_back(value);
+    
 }
 
 void Wire::setName(std::string n) {
