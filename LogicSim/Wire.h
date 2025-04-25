@@ -32,6 +32,7 @@ public:
     std::vector<int> getHistory() const;
     std::vector<Gate*> getDrives() const;
     void printHistory() const;
+    void removeHistory();
     //Setters
     void setValue(int v);
     void setName(std::string n);

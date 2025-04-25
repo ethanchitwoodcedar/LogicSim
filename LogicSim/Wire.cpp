@@ -6,7 +6,6 @@ Wire::Wire(int v = -1, std::string n = "new", int i = 0) {
     name = n;
     index = i;
     value = v;
-    history.push_back(-1);
 }
 
 int Wire::getValue() const {
@@ -49,6 +48,10 @@ void Wire::setValue(int v) {
     value = v;
     history.push_back(value);
     
+}
+
+void Wire::removeHistory() {
+    history.pop_back();
 }
 
 void Wire::setName(std::string n) {

@@ -39,7 +39,7 @@ Gate* loadGate(ifstream& circuitIn, map<int, Wire*>& wires, int type) {
     return newGate;
 }
 
-void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& events, string& circuitName, vector<Wire*>& outputs) {
+void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& events, string& circuitName, vector<Wire*>& inputs, vector<Wire*>& outputs) {
     ifstream circuitIn;
     ifstream vectorIn;
     string filename;
@@ -67,6 +67,7 @@ void parseFiles(vector<Gate*>& gates, map<int, Wire*>& wires, queue<Event*>& eve
             circuitIn >> input;
             circuitIn >> A;
             wires.emplace(A, new Wire(-1, input, A));
+            inputs.push_back(new Wire(-1, input, A));
         }
         else if ("OUTPUT" == input) {
             circuitIn >> input;
@@ -130,7 +131,14 @@ Gate* getGate(Wire* wire, vector<Gate*> list) {
 
 void evaluateLetters(queue<Event*> events, map<int, Wire*> wires) {
     for (int t = 0; t < 60; t++) {
-        while (events.front()->getTime() == t) {
+        // Update all to previous value
+        for (map<int, Wire*>::iterator itr = wires.begin(); itr != wires.end(); itr++) {
+            itr->second->setValue(itr->second->getValue());
+        }
+
+        // Correct if there are Events
+        if (events.front()->getTime() == t) {
+            wires.at(events.front()->getKey())->removeHistory();
             wires.at(events.front()->getKey())->setValue(events.front()->getValue());
             events.pop();
         }
@@ -159,7 +167,7 @@ void evaluateInternals(Wire* output, vector<Gate*> list) {
     }
 }
 
-void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, vector<Wire*> outputs) {
+void simulate(vector<Gate*> list, map<int, Wire*> wires, queue<Event*> events, vector<Wire*> inputs, vector<Wire*> outputs) {
     
     // Update input wires
     evaluateLetters(events, wires);
@@ -190,12 +198,12 @@ int main(int argc, char* argv[])
     string circuitName;
     map<int, Wire*> wires;
     vector<Gate*> gates;
-    vector<Wire*> outputs;
+    vector<Wire*> inputs, outputs;
     queue<Event*> events;
    
-    parseFiles(gates, wires, events, circuitName, outputs);
+    parseFiles(gates, wires, events, circuitName, inputs, outputs);
 
-    simulate(gates, wires, events, outputs);
+    simulate(gates, wires, events, inputs, outputs);
 
     print(wires, circuitName);
 
